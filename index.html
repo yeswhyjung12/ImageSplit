@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="decription" content="이미지를 가로, 세로 원하는 방향과 원하는 조각의 수로 분할할 수 있습니다. 이용방법도 간단하고 무료입니다.">
+    <title>포토샵을 사용하지 않고 이미지를 분할하고 싶다면?</title>
+    <link rel="icon" href="favicon/girin.ico" type="image/x-icon">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: whitesmoke;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        #firstSect {
+            width: 100%;
+            height: 80px;
+            background-color: #083709;
+            color: white;
+            padding: auto;
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .logo {
+            margin: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .logo img {
+            height: 58px;
+            margin-top: 4px;
+        }
+
+        .logo #developer {
+            font-size: 12px;
+            margin: 0 auto 2px;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding-bottom:  2px;
+        }
+
+        #container {
+            width: 80%;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            color: black;
+            padding: 30px 20px 20px;
+            margin: 0;
+            text-align: center;
+        }
+
+        #dropZone {
+            text-align: center;
+            background-color: white;
+            color: #333;
+            width: 96%;
+            height: 150px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+            border: 2px dashed green;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+            position: relative;
+        }
+
+        #dropZone span {
+            pointer-events: none;
+            font-size: 18px;
+            color: #083709;
+
+        }
+
+        #imageContainer {
+            display: flex;
+            width: 60%;
+            height: 400px;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            margin: 20px auto;
+            border-radius: 8px;
+            border: 2px solid green;
+        }
+
+        #imageContainer.background {
+            background-color: white;
+            border-color: green;
+        }
+
+        #myCanvas {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        #controls {
+            display: flex;
+            text-align: center;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            /* padding: 20px; */
+        }
+
+        .input-group {
+            margin: 10px auto;
+        }
+
+        .input-group label {
+            font-size: 18px;
+        }
+
+        #controls input[type="number"] {
+            width: 50px;
+            padding: 5px;
+            margin: 0 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        #splitButton {
+            padding: 15px 40px;
+            margin: 10px auto;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        #splitButton:hover {
+            background-color: green;
+        }
+
+        #downloadContainer {
+            padding: auto;
+            margin: 10px auto 20px;
+        }
+
+        #downloadAllButton {
+            padding: 15px 40px;
+            margin: 10px auto;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+
+        #downloadAllButton:hover {
+            background-color: rgb(126, 163, 212);
+        }
+
+        .convertbut {
+            border: 2px solid green;
+            background-color: white;
+            margin: 80px 0;
+            width: 100%;
+            height: 100px;
+            padding: auto;
+            color: #083709;
+            font-size: 18px;
+            cursor: pointer;
+            /**border-radius: 4px;*/
+        }
+
+        .convertbut:hover {
+            background-color: green;
+            color: white;
+        }
+
+        .exampleBox {
+            text-align: center;
+            font-size: 16px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .eBox {
+            margin: 20px 0;
+        }
+
+        .eBox img {
+            width: 100%;
+            height: auto;
+            max-width: 600px;
+        }
+
+        .pieces-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .pieces-container img {
+            max-width: 100px;
+            height: auto;
+            flex: 1 1 auto;
+        }
+
+        #textBox {
+            margin: 20px auto;
+            background: #a0aba0;
+            width: 100%;
+            padding: 20px;
+            font-size: 22px;
+            box-sizing: border-box;
+            letter-spacing: 1px;
+            line-height: 1.5;
+        }
+
+        .tbox {
+            margin: 30px auto;
+        }
+
+        /* 모바일 대응 */
+        @media only screen and (max-width: 768px) {
+
+            #firstSect {
+                height: 50px;
+            }
+
+            .logo img {
+                height: 36px;
+                margin-top: 2px;
+                margin-bottom: 1px;
+                border-radius: 4px;
+
+            }
+
+            .logo #developer {
+                font-size: 8px;
+                margin: 0;
+            }
+
+            h1 {
+                font-size: 18px;
+            }
+
+            #container {
+                padding: 0 5px;
+                width: 90%;
+                height: auto;
+            }
+
+            #dropZone {
+                margin: 10px auto;
+            }
+
+            #dropZone span {
+                margin: auto 5px;
+                font-size: 16px;
+            }
+
+            #imageContainer {
+                width: 90%;
+                height: auto;
+                padding: 10px;
+                margin: 20px auto;
+            }
+
+            #myCanvas {
+                width: 100%;
+                height: auto;
+                object-fit: contain;
+            }
+
+            #splitButton {
+                font-size: 18px;
+            }
+
+            #downloadAllButton {
+                font-size: 18px;
+            }
+
+            .convertbut {
+                margin: 60px 0;
+
+            }
+
+            .exampleBox {
+                width: 90%;
+            }
+
+            h3 {
+                margin: 10px auto;
+                font-size: 16px;
+            }
+
+            h4 {
+                margin: 10px auto;
+                font-size: 14px;
+            }
+
+            .pieces-container {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+                gap: 5px;
+            }
+
+            .pieces-container img {
+                max-width: 100%;
+            }
+
+            #textBox {
+                margin-bottom: 0;
+            }
+
+            .box {
+                font-size: 16px;
+            }
+
+            .tbox {
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <section id="firstSect">
+        <div class="logo-container">
+            <div class="logo">
+                <img src="images/logo.png">
+                <p id="developer">developed by coding-girin</p>
+            </div>
+        </div>
+    </section>
+    <h1>이미지를 분할할 수 있습니다.</h1>
+    <div id="container">
+        <div id="dropZone">
+            <span>이미지를 드래그 앤 드롭하거나 눌러서 업로드 해주세요</span>
+            <input type="file" id="imageInput" style="display: none;" accept="image/*">
+        </div>
+    </div>
+    <div id="imageContainer">
+        <canvas id="myCanvas"></canvas>
+    </div>
+    <div id="controls">
+        <div class="input-group">
+            <label for="columns">세로</label>
+            <input type="number" id="columns" value="2" min="1">
+            <label for="rows">가로</label>
+            <input type="number" id="rows" value="2" min="1">
+        </div>
+        <br>
+        <button id="splitButton" disabled>분할하기</button>
+    </div>
+    <div id="downloadContainer"></div>
+    <button id="downloadAllButton" disabled>모든 조각 다운로드</button>
+
+    <button class="convertbut" onclick="location.href='https://example.com' //실제 url 넣기//">퍼즐 조각 그리기 페이지로 이동</button>
+
+    <div class="exampleBox">
+        <h3>예시 이미지를 참고해 주세요</h3>
+        <h4>예시 이미지는 추가 보정 없이 프로그램에 의해 생성된 이미지 그대로입니다.</h4>
+        <br>
+        <div class="eBox">
+            <img src="images/owl.png">
+            <p>가로 2, 세로 1 설정으로 4개의 조각으로 분할한 결과입니다.</p>
+            <div class="pieces-container">
+                <img src="images/owl_pieces1.png">
+                <img src="images/owl_pieces2.png">
+            </div>
+        </div>
+        <br>
+        <div class="eBox">
+            <img src="images/mountain.png">
+            <p>가로 3, 세로 3 설정으로 9개의 조각으로 분할한 결과입니다.</p>
+            <div class="pieces-container">
+                <img src="images/mountain_pieces1.png">
+                <img src="images/mountain_pieces2.png">
+                <img src="images/mountain_pieces3.png">
+                <img src="images/mountain_pieces4.png">
+                <img src="images/mountain_pieces5.png">
+                <img src="images/mountain_pieces6.png">
+                <img src="images/mountain_pieces7.png">
+                <img src="images/mountain_pieces8.png">
+                <img src="images/mountain_pieces9.png">
+            </div>
+        </div>
+        <br>
+        <div class="eBox">
+            <img src="images/giraffe.png">
+            <p>가로 2, 세로 2 설정으로 4개의 조각으로 분할한 결과입니다.</p>
+            <div class="pieces-container">
+                <img src="images/giraffe_pieces1.png">
+                <img src="images/giraffe_pieces2.png">
+                <img src="images/giraffe_pieces3.png">
+                <img src="images/giraffe_pieces4.png">
+            </div>
+            <br>
+            <p>Samsung Notes를 이용하여 분할한 이미지 4개를 이어붙여 원본 이미지를 복원했습니다.</p>
+            <img src="images/re_img.png">
+
+        </div>
+    </div>
+    <div id="textBox">
+        <div class="box">
+            이미지를 분할하여 png파일로 저장할 수 있습니다.
+            <br>
+            조각 수의 제한은 없습니다. 하지만, 이미지의 크기에 비해서 너무 많은 조각으로 분할하고자 한다면 분할되지 않을 수 있습니다.
+            <br>
+            *이미지 파일에 따라 조각의 크기가 일정하지 않게 나올 수 있습니다.
+
+        </div>
+        <div class="tbox">
+            이용방법
+            <br>
+            이미지 올리기 ➡️ 가로, 세로 정하기 ➡️ 분할하기 버튼 ➡️ 저장하기
+            <br>
+            <br>
+            ✔️ 이미지 드래그 앤 드롭 영역을 클릭하여 이미지 파일을 업로드합니다.
+            <br>
+            ✔️ 가로, 세로의 수를 조정하면 분할선을 따라 잘릴 조각들이 생성됩니다.
+            <br>
+            ✔️ '분할하기' 버튼을 누르면 퍼즐 조각이 분할선을 따라 잘립니다.
+            <br>
+            한 번 분할하기 버튼을 누른 후에는 다시 눌러도 작동하지 않습니다!  
+            <br>
+            분할하기 버튼을 누르기 전이라면 드래그 앤 드롭 영역을 다시 클릭해 이미지를 계속 바꿔도 되지만, 분할하기 버튼을 눌렀다면 페이지 새로고침을 해주세요
+            <br>
+            ✔️ 개별 조각들을 따로 저장할 수 있습니다. 'Download Piece'를 누르면 됩니다.
+            <br>
+            ✔️ '모든 조각 다운로드' 버튼을 누르면 zip 파일로 모든 조각들이 빠짐없이 저장됩니다.
+            <br>
+            <br>
+            *업로드한 이미지는 당사자의 pc 혹은 모바일 기기 외에 다른 곳에 저장되거나 이용되지 않습니다.
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <script src="horizontal_vertical.js"></script>
+</body>
+
+</html>
